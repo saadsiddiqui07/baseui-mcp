@@ -34,16 +34,33 @@ An [MCP](https://modelcontextprotocol.io) server that gives AI assistants practi
 - Node.js 20 or newer
 - A React Native or Expo project using NativeBase v3
 
-## Installation
+## 1. Set up the project
 
 ```bash
+git clone https://github.com/saadsiddiqui07/baseui-mcp.git
+cd baseui-mcp
 npm install
+```
+
+## 2. Build and test
+
+Compile the TypeScript source:
+
+```bash
 npm run build
 ```
 
-## Usage
+Then verify the server with the MCP Inspector. Both protocol eras should list the same 5 tools: `list_components`, `get_component`, `search_components`, `generate_ui`, `setup_guide`.
 
-Start the server directly:
+```bash
+# modern protocol era
+npx @modelcontextprotocol/inspector --cli node build/index.js --protocol-era modern --method tools/list
+
+# legacy era
+npx @modelcontextprotocol/inspector --cli node build/index.js --protocol-era legacy --method tools/list
+```
+
+You can also run the compiled server directly:
 
 ```bash
 npm start
@@ -51,26 +68,45 @@ npm start
 node build/index.js
 ```
 
-The server communicates over **stdio**, so configure it in your MCP client instead. For example:
+The server communicates over **stdio**, so normally your MCP client starts it for you.
+
+## 3. Connect to Claude Desktop
+
+Edit `claude_desktop_config.json`:
+
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%AppData%\Claude\claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
-    "baseui": {
+    "BaseUI": {
       "command": "node",
-      "args": ["/absolute/path/to/baseui-mcp/build/index.js"]
+      "args": ["/ABSOLUTE/PATH/TO/baseui-mcp/build/index.js"]
     }
   }
 }
 ```
 
-Once connected, ask your assistant things like:
+Replace `/ABSOLUTE/PATH/TO/baseui-mcp` with the actual path on your machine. Then **fully quit and restart Claude Desktop** so it picks up the new server.
 
-- "Generate a login screen with email and password."
-- "Show me how to build a product list with prices."
-- "What props does the Modal component take?"
-- "Find a dropdown component."
-- "How do I set up NativeBase in Expo?"
+### Example prompts
+
+- "Using BaseUI, give me a login screen"
+- "BaseUI: product list with price and add to cart button"
+- "BaseUI: how do I use the Modal component?"
+- "BaseUI: settings screen with a dark mode toggle and a language picker, then add a logout button"
+
+The same stdio configuration works with any MCP-compatible client (Cursor, VS Code, etc.) — point its `command` and `args` at `build/index.js`.
+
+## 4. Extending it
+
+- **More components:** add an object to `src/data/components.ts`.
+- **More screens:** add an object to `src/data/templates.ts` (onboarding, chat, checkout, dashboard, etc.) with good keywords, since matching is keyword-based.
+- **Smarter matching:** swap `score()` in `src/utils/helpers.ts` for embeddings later. Since Claude is the caller, even the current keyword search works well because it can combine templates and components itself.
+- **Different UI library:** replace the two data files (`components.ts`, `templates.ts`) and the `RULES` text in `src/tools/generateUI.ts`.
+
+After any change, rerun `npm run build`.
 
 ## Project structure
 
