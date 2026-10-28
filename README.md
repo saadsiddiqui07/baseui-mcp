@@ -1,13 +1,13 @@
 # baseui-mcp
 
-An [MCP](https://modelcontextprotocol.io) server that gives AI assistants practical knowledge of **NativeBase v3** UI components for React Native and Expo. Ask for a screen in natural language and get ready-to-use code, component docs, and setup instructions.
+An [MCP](https://modelcontextprotocol.io) server that gives AI assistants practical knowledge of **gluestack-ui v5** components for React Native and Expo. Ask for a screen in natural language and get ready-to-use code, component docs, and setup instructions.
 
 ## Features
 
 - **Screen generation** — returns a complete screen template for common prompts, or composes one from matching components.
-- **Component reference** — props and code examples for 20 NativeBase components.
+- **Component reference** — props and code examples for 31 gluestack-ui v5 components.
 - **Intent search** — keyword-based search such as `loading indicator` or `user picture`.
-- **Setup guidance** — install commands and `NativeBaseProvider` root setup for Expo and React Native CLI.
+- **Setup guidance** — gluestack-ui v5 CLI install steps, styling engine choice, and `GluestackUIProvider` root setup for Expo and React Native CLI.
 - **Zero runtime dependencies** beyond the MCP SDK and Zod — all content is bundled.
 
 ## Available tools
@@ -18,21 +18,25 @@ An [MCP](https://modelcontextprotocol.io) server that gives AI assistants practi
 | `list_components` | List all components and templates, optionally filtered by category. |
 | `get_component` | Get details, props, and an example for a single component. |
 | `search_components` | Search components by intent. |
-| `setup_guide` | Get NativeBase installation and provider setup steps. |
+| `setup_guide` | Get gluestack-ui v5 installation and provider setup steps. |
 
-**Categories:** `layout`, `typography`, `form`, `feedback`, `data`, `action`, `media`
+**Categories:** `layout`, `typography`, `form`, `feedback`, `data`, `action`, `media`, `overlay`
 
 ## Screen templates
 
 - `login` — email/password login with show/hide password
-- `profile-card` — user profile card
+- `profile-card` — user profile card with avatar and stats
 - `product-card` — scrollable product list with prices and badges
 - `settings` — settings list with switches and a language selector
 
+Templates use gluestack-ui v5 components imported from `@/components/ui/*` and styled with semantic Tailwind tokens via `className`.
+
 ## Requirements
 
-- Node.js 20 or newer
-- A React Native or Expo project using NativeBase v3
+- Node.js 20 or newer (for the MCP server)
+- For the target app: Expo SDK 50+ or React Native 0.72.5+, using gluestack-ui v5
+
+> gluestack-ui v5 does not currently support Next.js. Use [gluestack-ui v4](https://v4.gluestack.io) for Next.js projects.
 
 ## 1. Set up the project
 
@@ -96,10 +100,35 @@ Replace `/ABSOLUTE/PATH/TO/baseui-mcp` with the actual path on your machine. The
 - "BaseUI: product list with price and add to cart button"
 - "BaseUI: how do I use the Modal component?"
 - "BaseUI: settings screen with a dark mode toggle and a language picker, then add a logout button"
+- "BaseUI: how do I set up gluestack-ui v5 in Expo?"
 
 The same stdio configuration works with any MCP-compatible client (Cursor, VS Code, etc.) — point its `command` and `args` at `build/index.js`.
 
-## 4. Extending it
+## 4. Set up gluestack-ui in your app
+
+The `setup_guide` tool returns the full steps. In short:
+
+```bash
+npx gluestack-ui init     # choose NativeWind v5 (Expo + RN CLI) or UniWind (Expo only)
+npx gluestack-ui add --all
+```
+
+`init` generates `components/ui/`, the provider, `global.css`, and the bundler/Tailwind configuration. Import the stylesheet and wrap the app root:
+
+```tsx
+import "@/global.css";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+
+export default function App() {
+  return (
+    <GluestackUIProvider mode="system">
+      {/* app */}
+    </GluestackUIProvider>
+  );
+}
+```
+
+## 5. Extending it
 
 - **More components:** add an object to `src/data/components.ts`.
 - **More screens:** add an object to `src/data/templates.ts` (onboarding, chat, checkout, dashboard, etc.) with good keywords, since matching is keyword-based.
@@ -138,4 +167,6 @@ npm start       # run the compiled server
 
 ## Notes
 
-NativeBase is in maintenance mode. Verify version compatibility with your React Native or Expo version at [docs.nativebase.io](https://docs.nativebase.io) before installing.
+- gluestack-ui v5 uses copy-paste components. Generated code imports from `@/components/ui/<component>`; the target project must run `npx gluestack-ui add <component>` for any component it does not already have.
+- Use semantic tokens (`bg-background`, `text-foreground`, `border-border`, `bg-primary`, `text-muted-foreground`) rather than raw color palette classes.
+- Docs: [gluestack-ui v5](https://gluestack.io/ui/docs/home/overview/quick-start)

@@ -8,7 +8,7 @@ export function registerGetComponent(server: McpServer) {
     "get_component",
     {
       description:
-        "Get details, props and a code example for one NativeBase component by name (e.g. Button, Input, Modal).",
+        "Get details, props and a code example for one gluestack-ui v5 component by name (e.g. Button, Input, Modal).",
       inputSchema: z.object({
         name: z.string().describe("Component name, e.g. Button"),
       }),

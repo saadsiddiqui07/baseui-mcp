@@ -1,6 +1,7 @@
 {
   "name": "baseui-mcp",
   "version": "1.0.0",
+  "description": "MCP server providing gluestack-ui v5 component docs, screen templates, and setup guidance for React Native and Expo.",
   "type": "module",
   "bin": {
     "baseui": "./build/index.js"

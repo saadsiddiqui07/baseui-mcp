@@ -4,18 +4,20 @@ import { components } from "../data/components.js";
 import { templates } from "../data/templates.js";
 import { score, text } from "../utils/helpers.js";
 
-const RULES = `Rules when adapting or composing NativeBase code:
-- Import everything from "native-base" (NativeBase v3 API).
-- Use style props (p, m, bg, rounded, space) instead of StyleSheet.
-- Root of the app must be wrapped in <NativeBaseProvider> (see setup_guide).
-- Use Pressable/Button onPress, not onClick.`;
+const RULES = `Rules when adapting or composing gluestack-ui v5 code:
+- Import components from "@/components/ui/<component>" (e.g. "@/components/ui/button", "@/components/ui/input").
+- If a component is missing, add it with \`npx gluestack-ui add <component>\` — never install another UI kit.
+- Style with the className prop using semantic tokens (bg-background, text-foreground, border-border, bg-primary, text-muted-foreground, text-destructive). Avoid raw palette classes.
+- Root must be wrapped in <GluestackUIProvider mode="system"> with global.css imported (see setup_guide).
+- Use onPress, not onClick. Use React Native primitives such as FlatList and ScrollView from "react-native".
+- Follow compound APIs (Button/ButtonText, Input/InputField, FormControl/FormControlLabel, Select/SelectTrigger/SelectContent/SelectItem, Modal/ModalContent, etc.).`;
 
 export function registerGenerateUI(server: McpServer) {
   server.registerTool(
     "generate_ui",
     {
       description:
-        "Main BaseUI tool. Give a natural-language prompt (e.g. 'login screen', 'product list with price') and get complete NativeBase React Native code. Returns the closest screen template, or relevant components to compose from when nothing matches.",
+        "Main BaseUI tool. Give a natural-language prompt (e.g. 'login screen', 'product list with price') and get complete gluestack-ui v5 React Native code. Returns the closest screen template, or relevant components to compose from when nothing matches.",
       inputSchema: z.object({
         prompt: z.string().describe("Description of the UI you want"),
       }),
@@ -54,7 +56,7 @@ Customize this code to match the user's exact prompt: "${prompt}"`);
       const pool = matches.length ? matches.map((m) => m.c) : components.slice(0, 6);
 
       return text(`No ready template matched "${prompt}".
-Compose the screen yourself from these NativeBase components:
+Compose the screen yourself from these gluestack-ui v5 components:
 
 ${pool.map((c) => `## ${c.name}\n${c.description}\n\`\`\`tsx\n${c.example}\n\`\`\``).join("\n\n")}
 

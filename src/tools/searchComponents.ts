@@ -8,7 +8,7 @@ export function registerSearchComponents(server: McpServer) {
     "search_components",
     {
       description:
-        "Search NativeBase components by intent, e.g. 'dropdown', 'loading indicator', 'user picture'. Returns the best matches with examples.",
+        "Search gluestack-ui v5 components by intent, e.g. 'dropdown', 'loading indicator', 'user picture'. Returns the best matches with examples.",
       inputSchema: z.object({
         query: z.string().describe("What UI element you need"),
         limit: z.number().int().min(1).max(10).default(5).describe("Max results"),

@@ -9,10 +9,10 @@ export function registerListComponents(server: McpServer) {
     "list_components",
     {
       description:
-        "List all NativeBase components and ready-made screen templates available in BaseUI, optionally filtered by category.",
+        "List all gluestack-ui v5 components and ready-made screen templates available in BaseUI, optionally filtered by category.",
       inputSchema: z.object({
         category: z
-          .enum(["layout", "typography", "form", "feedback", "data", "action", "media"])
+          .enum(["layout", "typography", "form", "feedback", "data", "action", "media", "overlay"])
           .optional()
           .describe("Filter components by category"),
       }),
